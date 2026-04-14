@@ -8,7 +8,9 @@ export default function ManageSponsors() {
   const [sponsors, setSponsors] = useState([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
-  const [formData, setFormData] = useState({ name: '', logo_url: '', website_url: '' })
+  const [isUploading, setIsUploading] = useState(false)
+  const [formData, setFormData] = useState({ name: '', website_url: '' })
+  const [logoFile, setLogoFile] = useState(null)
 
   useEffect(() => {
     fetchSponsors()
@@ -28,19 +30,55 @@ export default function ManageSponsors() {
 
   async function handleSubmit(e) {
     e.preventDefault()
-    const { data, error } = await supabase.from('sponsors').insert([formData]).select().single()
-    
-    if (error) toast.error(error.message)
-    else {
+    if (!logoFile) {
+      toast.error('Please upload a logo.')
+      return
+    }
+
+    setIsUploading(true)
+    try {
+      const fileExt = logoFile.name.split('.').pop()
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
+      
+      const { error: uploadError } = await supabase.storage
+        .from('sponsors')
+        .upload(fileName, logoFile)
+
+      if (uploadError) throw uploadError
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('sponsors')
+        .getPublicUrl(fileName)
+
+      const payload = { ...formData, logo_url: publicUrl }
+      const { data, error } = await supabase.from('sponsors').insert([payload]).select().single()
+      
+      if (error) throw error
+      
       toast.success('Sponsor added!')
       setSponsors([...sponsors, data])
-      setFormData({ name: '', logo_url: '', website_url: '' })
+      setFormData({ name: '', website_url: '' })
+      setLogoFile(null)
       setShowForm(false)
+    } catch (err) {
+      console.error(err)
+      toast.error('Failed to add sponsor')
+    } finally {
+      setIsUploading(false)
     }
   }
 
-  async function handleDelete(id) {
+  async function handleDelete(id, logoUrl) {
     if (!confirm('Are you sure? This will remove the sponsor from the ticker.')) return
+    
+    // Attempt to delete logo from storage
+    if (logoUrl) {
+      const fileName = logoUrl.split('/').pop()
+      if (fileName) {
+         await supabase.storage.from('sponsors').remove([fileName]).catch(console.error)
+      }
+    }
+
     const { error } = await supabase.from('sponsors').delete().eq('id', id)
     if (error) toast.error(error.message)
     else {
@@ -87,15 +125,21 @@ export default function ManageSponsors() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-white/50 uppercase tracking-widest">Logo URL (SVG Preferred)</label>
-                <input 
-                  required
-                  type="url"
-                  placeholder="https://..."
-                  className="w-full bg-white border-0 px-4 py-4 text-xs font-black uppercase tracking-widest focus:ring-2 focus:ring-nike-red outline-none"
-                  value={formData.logo_url}
-                  onChange={e => setFormData({...formData, logo_url: e.target.value})}
-                />
+                <label className="text-[10px] font-black text-white/50 uppercase tracking-widest">Logo Upload (SVG/PNG)</label>
+                <div className="w-full bg-white px-4 py-3 flex items-center justify-between border-0 focus-within:ring-2 focus-within:ring-nike-red">
+                  <span className="text-xs font-black uppercase tracking-widest text-nike-black truncate">
+                    {logoFile ? logoFile.name : 'Choose file...'}
+                  </span>
+                  <label className="cursor-pointer bg-nike-black text-white px-3 py-1 text-[10px] uppercase font-black tracking-widest hover:bg-nike-secondary transition-colors">
+                    Browse
+                    <input 
+                      type="file" 
+                      className="hidden" 
+                      accept="image/*"
+                      onChange={e => setLogoFile(e.target.files?.[0] || null)}
+                    />
+                  </label>
+                </div>
               </div>
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-white/50 uppercase tracking-widest">Website URL (Optional)</label>
@@ -108,8 +152,12 @@ export default function ManageSponsors() {
                 />
               </div>
               <div className="lg:col-span-3 flex justify-end gap-4 mt-4">
-                 <button type="submit" className="bg-white text-nike-black font-black uppercase tracking-widest text-[10px] py-4 px-12 hover:bg-light-gray transition-all">
-                   Save Partner
+                 <button 
+                  type="submit" 
+                  disabled={isUploading}
+                  className="bg-white text-nike-black font-black uppercase tracking-widest text-[10px] py-4 px-12 hover:bg-light-gray transition-all disabled:opacity-50"
+                 >
+                   {isUploading ? 'Uploading...' : 'Save Partner'}
                  </button>
               </div>
             </form>
@@ -121,7 +169,7 @@ export default function ManageSponsors() {
           {sponsors.map(sponsor => (
             <div key={sponsor.id} className="bg-white border border-light-gray p-8 flex flex-col items-center group relative shadow-sm hover:shadow-xl transition-all">
               <button 
-                onClick={() => handleDelete(sponsor.id)}
+                onClick={() => handleDelete(sponsor.id, sponsor.logo_url)}
                 className="absolute top-4 right-4 text-light-gray hover:text-nike-red opacity-0 group-hover:opacity-100 transition-all"
               >
                 <Trash2 size={18} />

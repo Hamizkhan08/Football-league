@@ -10,7 +10,9 @@ export default function ManageTeams() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [showAddForm, setShowAddForm] = useState(false)
-  const [formData, setFormData] = useState({ name: '', captain_name: '', logo_url: '', pool: 'A' })
+  const [isUploading, setIsUploading] = useState(false)
+  const [formData, setFormData] = useState({ name: '', captain_name: '', pool: 'A' })
+  const [logoFile, setLogoFile] = useState(null)
 
   useEffect(() => {
     fetchTeams()
@@ -26,18 +28,56 @@ export default function ManageTeams() {
 
   async function handleAdd(e) {
     e.preventDefault()
-    const { data, error } = await supabase.from('teams').insert([formData]).select()
-    if (error) toast.error(error.message)
-    else {
+    setIsUploading(true)
+    try {
+      let publicUrl = null
+      
+      if (logoFile) {
+        const fileExt = logoFile.name.split('.').pop()
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
+        
+        const { error: uploadError } = await supabase.storage
+          .from('teams')
+          .upload(fileName, logoFile)
+
+        if (uploadError) throw uploadError
+
+        const { data: uploadData } = supabase.storage
+          .from('teams')
+          .getPublicUrl(fileName)
+          
+        publicUrl = uploadData.publicUrl
+      }
+
+      const payload = { ...formData, logo_url: publicUrl }
+      const { data, error } = await supabase.from('teams').insert([payload]).select()
+      
+      if (error) throw error
+      
       toast.success('Team registered!')
       setTeams([...teams, data[0]])
-      setFormData({ name: '', captain_name: '', logo_url: '', pool: 'A' })
+      setFormData({ name: '', captain_name: '', pool: 'A' })
+      setLogoFile(null)
       setShowAddForm(false)
+    } catch (err) {
+      console.error(err)
+      toast.error('Failed to register team')
+    } finally {
+      setIsUploading(false)
     }
   }
 
-  async function handleDelete(id) {
+  async function handleDelete(id, logoUrl) {
     if (!confirm('Are you sure? This will delete all players and stats for this team!')) return
+    
+    // Attempt to delete logo from storage
+    if (logoUrl) {
+      const fileName = logoUrl.split('/').pop()
+      if (fileName) {
+         await supabase.storage.from('teams').remove([fileName]).catch(console.error)
+      }
+    }
+    
     const { error } = await supabase.from('teams').delete().eq('id', id)
     if (error) toast.error(error.message)
     else {
@@ -112,9 +152,30 @@ export default function ManageTeams() {
                   <option value="B">Pool B</option>
                 </select>
               </div>
+              <div className="space-y-2 lg:col-span-2 md:col-span-1">
+                <label className="text-[10px] font-black text-white/50 uppercase tracking-widest">Team Logo (Optional)</label>
+                <div className="w-full bg-white px-4 py-3 flex items-center justify-between border border-light-gray focus-within:ring-2 focus-within:ring-nike-red">
+                  <span className="text-xs font-black uppercase tracking-widest text-nike-black truncate">
+                    {logoFile ? logoFile.name : 'Choose file...'}
+                  </span>
+                  <label className="cursor-pointer bg-nike-black text-white px-3 py-1 text-[10px] uppercase font-black tracking-widest hover:bg-nike-secondary transition-colors">
+                    Browse
+                    <input 
+                      type="file" 
+                      className="hidden" 
+                      accept="image/*"
+                      onChange={e => setLogoFile(e.target.files?.[0] || null)}
+                    />
+                  </label>
+                </div>
+              </div>
               <div className="flex items-end">
-                <button type="submit" className="w-full bg-white text-nike-black font-black uppercase tracking-widest text-[10px] py-4 hover:bg-light-gray transition-all">
-                  Register Now
+                <button 
+                  type="submit" 
+                  disabled={isUploading}
+                  className="w-full bg-white text-nike-black font-black uppercase tracking-widest text-[10px] py-4 hover:bg-light-gray transition-all disabled:opacity-50"
+                >
+                  {isUploading ? 'Registering...' : 'Register Now'}
                 </button>
               </div>
             </form>
@@ -144,7 +205,7 @@ export default function ManageTeams() {
                      <span className={`px-3 py-1 text-[10px] font-black uppercase tracking-widest ${team.pool === 'A' ? 'bg-snow text-nike-black border border-light-gray' : 'bg-nike-blue text-white'}`}>
                       Pool {team.pool}
                     </span>
-                    <button onClick={() => handleDelete(team.id)} className="p-2 text-nike-secondary hover:text-nike-red transition-colors">
+                    <button onClick={() => handleDelete(team.id, team.logo_url)} className="p-2 text-nike-secondary hover:text-nike-red transition-colors">
                       <Trash2 size={16} />
                     </button>
                   </div>

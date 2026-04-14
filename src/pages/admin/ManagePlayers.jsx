@@ -12,8 +12,10 @@ export default function ManagePlayers() {
   const [teamFilter, setTeamFilter] = useState('all')
   const [editingPlayer, setEditingPlayer] = useState(null)
   const [showAddForm, setShowAddForm] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
+  const [photoFile, setPhotoFile] = useState(null)
   const [formData, setFormData] = useState({ 
-    name: '', team_id: '', jersey_no: '', position: 'Forward', image_url: '', is_captain: false 
+    name: '', team_id: '', jersey_no: '', position: 'Forward', is_captain: false 
   })
 
   useEffect(() => {
@@ -38,32 +40,88 @@ export default function ManagePlayers() {
     setLoading(false)
   }
 
+  async function handleFileUpload(file) {
+    const fileExt = file.name.split('.').pop()
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
+    
+    const { error: uploadError } = await supabase.storage
+      .from('players')
+      .upload(fileName, file)
+
+    if (uploadError) throw uploadError
+
+    const { data: uploadData } = supabase.storage
+      .from('players')
+      .getPublicUrl(fileName)
+      
+    return uploadData.publicUrl
+  }
+
   async function handleAdd(e) {
     e.preventDefault()
-    const { data, error } = await supabase.from('players').insert([formData]).select()
-    if (error) toast.error(error.message)
-    else {
+    setIsUploading(true)
+    try {
+      let publicUrl = null
+      if (photoFile) {
+        publicUrl = await handleFileUpload(photoFile)
+      }
+
+      const payload = { ...formData, image_url: publicUrl }
+      const { data, error } = await supabase.from('players').insert([payload]).select()
+      
+      if (error) throw error
+      
       toast.success('Player added successfully!')
       setPlayers([...players, { ...data[0], team: teams.find(t => t.id === formData.team_id) }])
-      setFormData({ ...formData, name: '', jersey_no: '', image_url: '', is_captain: false, team_id: formData.team_id, position: 'Forward' })
+      setFormData({ name: '', jersey_no: '', is_captain: false, team_id: formData.team_id, position: 'Forward' })
+      setPhotoFile(null)
       setShowAddForm(false)
+    } catch (err) {
+      console.error(err)
+      toast.error('Failed to register player')
+    } finally {
+      setIsUploading(false)
     }
   }
 
   async function handleUpdate(e) {
     e.preventDefault()
-    const { team, ...updateData } = editingPlayer
-    const { error } = await supabase.from('players').update(updateData).eq('id', updateData.id)
-    if (error) toast.error(error.message)
-    else {
+    setIsUploading(true)
+    try {
+      let publicUrl = editingPlayer.image_url
+      
+      if (photoFile) {
+        publicUrl = await handleFileUpload(photoFile)
+      }
+
+      const { team, ...updateData } = editingPlayer
+      const payload = { ...updateData, image_url: publicUrl }
+      
+      const { error } = await supabase.from('players').update(payload).eq('id', payload.id)
+      if (error) throw error
+      
       toast.success('Player updated!')
-      setPlayers(players.map(p => p.id === updateData.id ? { ...editingPlayer, team: teams.find(t => t.id === updateData.team_id) } : p))
+      setPlayers(players.map(p => p.id === payload.id ? { ...payload, team: teams.find(t => t.id === payload.team_id) } : p))
       setEditingPlayer(null)
+      setPhotoFile(null)
+    } catch (err) {
+      console.error(err)
+      toast.error('Failed to update player')
+    } finally {
+      setIsUploading(false)
     }
   }
 
-  async function handleDelete(id) {
+  async function handleDelete(id, imageUrl) {
     if (!confirm('Are you sure?')) return
+    
+    if (imageUrl) {
+      const fileName = imageUrl.split('/').pop()
+      if (fileName) {
+         await supabase.storage.from('players').remove([fileName]).catch(console.error)
+      }
+    }
+    
     const { error } = await supabase.from('players').delete().eq('id', id)
     if (error) toast.error(error.message)
     else {
@@ -162,15 +220,21 @@ export default function ManagePlayers() {
               </div>
 
               <div className="lg:col-span-2 space-y-2">
-                 <label className="text-[10px] font-black text-white/50 uppercase tracking-widest">Personnel Image URL</label>
-                 <input 
-                  placeholder="https://..."
-                  className="w-full bg-white border border-light-gray px-4 py-3 text-sm font-bold focus:outline-none"
-                  value={editingPlayer ? editingPlayer.image_url || '' : formData.image_url}
-                  onChange={e => editingPlayer 
-                    ? setEditingPlayer({...editingPlayer, image_url: e.target.value}) 
-                    : setFormData({...formData, image_url: e.target.value})}
-                />
+                 <label className="text-[10px] font-black text-white/50 uppercase tracking-widest">Personnel Image (Optional)</label>
+                 <div className="w-full bg-white px-4 py-3 flex items-center justify-between border border-light-gray focus-within:ring-2 focus-within:ring-nike-red">
+                  <span className="text-xs font-black uppercase tracking-widest text-nike-black truncate">
+                    {photoFile ? photoFile.name : (editingPlayer?.image_url ? 'Existing photo linked...' : 'Choose file...')}
+                  </span>
+                  <label className="cursor-pointer bg-nike-black text-white px-3 py-1 text-[10px] uppercase font-black tracking-widest hover:bg-nike-secondary transition-colors">
+                    Browse
+                    <input 
+                      type="file" 
+                      className="hidden" 
+                      accept="image/*"
+                      onChange={e => setPhotoFile(e.target.files?.[0] || null)}
+                    />
+                  </label>
+                </div>
               </div>
 
               <div className="flex items-center gap-4 pt-4 lg:col-span-1">
@@ -187,8 +251,12 @@ export default function ManagePlayers() {
               </div>
 
               <div className="flex items-end">
-                <button type="submit" className="w-full bg-white text-nike-black font-black uppercase tracking-widest text-[10px] py-4 hover:bg-light-gray transition-all">
-                  {editingPlayer ? 'Apply Updates' : 'Authorize Entry'}
+                <button 
+                  type="submit" 
+                  disabled={isUploading}
+                  className="w-full bg-white text-nike-black font-black uppercase tracking-widest text-[10px] py-4 hover:bg-light-gray transition-all disabled:opacity-50"
+                >
+                  {isUploading ? 'Processing...' : (editingPlayer ? 'Apply Updates' : 'Authorize Entry')}
                 </button>
               </div>
             </form>
@@ -259,7 +327,7 @@ export default function ManagePlayers() {
                     <Edit2 size={16} />
                   </button>
                   <button 
-                    onClick={() => handleDelete(player.id)}
+                    onClick={() => handleDelete(player.id, player.image_url)}
                     className="text-nike-black hover:text-nike-red transition-colors"
                   >
                     <Trash2 size={16} />
