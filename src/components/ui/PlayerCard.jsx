@@ -1,55 +1,118 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Target, Activity, Users } from 'lucide-react'
+import { Target, Activity, Users, Camera, Upload, Check, Loader2 } from 'lucide-react'
+import { supabase } from '../../lib/supabase'
+import toast from 'react-hot-toast'
 
 export default function PlayerCard({ player }) {
+  const [isUploading, setIsUploading] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsAdmin(!!session)
+    })
+  }, [])
+
+  const handleUpload = async (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsUploading(true)
+    try {
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${player.id}-${Math.random()}.${fileExt}`
+      const filePath = `${fileName}`
+
+      // Upload to 'players' bucket
+      const { error: uploadError } = await supabase.storage
+        .from('players')
+        .upload(filePath, file)
+
+      if (uploadError) throw uploadError
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('players')
+        .getPublicUrl(filePath)
+
+      // Update player record
+      const { error: updateError } = await supabase
+        .from('players')
+        .update({ image_url: publicUrl })
+        .eq('id', player.id)
+
+      if (updateError) throw updateError
+      
+      toast.success('Photo updated!')
+      window.location.reload() // Simple refresh to see changes
+    } catch (error) {
+      console.error('Upload error:', error)
+      toast.error('Failed to upload image')
+    } finally {
+      setIsUploading(false)
+    }
+  }
   return (
-    <Link to={`/players/${player.id}`} className="block group">
-      <div className="bg-white border border-light-gray overflow-hidden hover:border-nike-black transition-colors flex sm:flex-col items-stretch h-[100px] sm:h-auto">
-        
-        {/* Player Image - Left on mobile, Top on desktop */}
-        <div className="w-[80px] sm:w-full sm:aspect-[4/5] bg-snow overflow-hidden relative border-r sm:border-r-0 border-b-0 sm:border-b border-light-gray flex items-center justify-center shrink-0">
-          {player.image_url ? (
-            <img
-              src={player.image_url}
-              alt={player.name}
-              onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            />
-          ) : null}
-          <div className={`flex items-center justify-center w-full h-full text-nike-black font-black text-xl uppercase tracking-tighter ${player.image_url ? 'hidden' : 'flex'}`}>
-            {(player.name || "?").split(' ').map(n => n[0]).join('').slice(0, 2)}
+    <div className="relative group">
+      <Link to={`/players/${player.id}`} className="block">
+        <div className="bg-white border border-light-gray group-hover:border-nike-black transition-all overflow-hidden flex flex-col h-full">
+          <div className="p-4 sm:p-6 flex items-start gap-4 sm:gap-6">
+            <div className="w-16 h-20 sm:w-20 sm:h-24 bg-light-gray shrink-0 border border-light-gray overflow-hidden relative group/img">
+              {player.image_url ? (
+                <img src={player.image_url} className="w-full h-full object-cover" alt={player.name} />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <Users size={32} className="text-nike-secondary/30" />
+                </div>
+              )}
+              
+              {/* Admin Upload Trigger */}
+              {isAdmin && (
+                <div className="absolute inset-0 bg-nike-black/60 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity cursor-pointer">
+                  {isUploading ? (
+                    <Loader2 size={20} className="text-white animate-spin" />
+                  ) : (
+                    <label className="cursor-pointer p-full w-full h-full flex items-center justify-center">
+                      <Camera size={20} className="text-white" />
+                      <input type="file" className="hidden" accept="image/*" onChange={handleUpload} disabled={isUploading} />
+                    </label>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div className="flex-1 min-w-0">
+              <div className="flex items-start justify-between mb-1">
+                <span className="nike-display text-2xl sm:text-4xl text-nike-black leading-none">{player.jersey_no || '00'}</span>
+                {player.is_captain && (
+                  <span className="text-[7px] sm:text-[8px] bg-nike-black text-white px-2 py-0.5 font-black uppercase tracking-widest">Captain</span>
+                )}
+              </div>
+              <h3 className="nike-headline text-lg sm:text-2xl mb-1 truncate uppercase">{player.name}</h3>
+              <p className="text-[8px] sm:text-[10px] font-black uppercase tracking-widest text-nike-secondary truncate mb-2">{player.team?.name}</p>
+              
+              {/* Mini Stats Grid */}
+              <div className="flex items-center gap-4 mt-2 border-t border-light-gray pt-2">
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black leading-none">{player.matches_played || 0}</span>
+                  <span className="text-[7px] font-bold text-nike-secondary uppercase tracking-widest">MP</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black text-nike-red leading-none">{player.goals || 0}</span>
+                  <span className="text-[7px] font-bold text-nike-secondary uppercase tracking-widest">Goals</span>
+                </div>
+              </div>
+            </div>
           </div>
-          {/* Jersey No - Top Left */}
-          <div className="absolute top-0 left-0 bg-nike-black text-white px-1.5 sm:px-2 py-0.5 sm:py-1">
-            <span className="text-[8px] sm:text-[9px] font-black tracking-tighter">#{player.jersey_no}</span>
+          
+          <div className="mt-auto px-4 sm:px-6 py-3 sm:py-4 bg-snow border-t border-light-gray flex items-center justify-between">
+            <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-widest text-nike-secondary border border-light-gray px-3 py-1 bg-white">
+              {player.position}
+            </span>
           </div>
         </div>
-
-        {/* Player Info and Stats - Right on mobile, Bottom on desktop */}
-        <div className="p-3 sm:p-3 flex flex-col justify-center sm:justify-start w-full">
-          <h3 className="text-nike-black font-black text-xs sm:text-xs uppercase tracking-tight leading-none truncate mb-1 line-clamp-1">
-            {player.name}
-          </h3>
-          <div className="flex items-center justify-between mb-2 sm:mb-0">
-            <p className="text-nike-secondary text-[8px] font-bold uppercase tracking-widest truncate">
-              {player.position || 'Player'}
-            </p>
-            {player.is_captain && <span className="text-nike-red text-[8px] font-black uppercase hidden sm:block">Captain</span>}
-          </div>
-
-          {/* Compact Tournament Stats */}
-          <div className="mt-auto sm:mt-3 grid grid-cols-2 gap-px bg-light-gray w-full sm:w-auto self-end sm:self-auto">
-            <div className="bg-white py-1.5 flex flex-col items-center">
-              <span className="text-[10px] font-black text-nike-black leading-none">{player.matches_played || 0}</span>
-              <span className="text-[7px] font-bold text-nike-secondary uppercase tracking-widest mt-0.5">MP</span>
-            </div>
-            <div className="bg-white py-1.5 flex flex-col items-center">
-              <span className="text-[10px] font-black text-nike-red leading-none">{player.goals || 0}</span>
-              <span className="text-[7px] font-bold text-nike-secondary uppercase tracking-widest mt-0.5">Goals</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </Link>
+      </Link>
+    </div>
   )
 }

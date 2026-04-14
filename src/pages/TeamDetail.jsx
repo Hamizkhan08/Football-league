@@ -9,6 +9,7 @@ import MatchCard from '../components/match/MatchCard'
 export default function TeamDetail() {
   const { id } = useParams()
   const { team, players, matches, loading, error } = useTeam(id)
+  const [activeTab, setActiveTab] = useState('squad')
 
   if (loading) return <PageLoader />
   if (error || !team) return (
@@ -42,7 +43,7 @@ export default function TeamDetail() {
                     <span className="text-white/40 text-[8px] md:text-[10px] font-black uppercase tracking-[0.3em]">Pool {team.pool || 'A'}</span>
                     <Badge variant="gold" className="text-[8px] md:text-[10px]">{team.is_qualified ? 'Qualifier' : 'League'}</Badge>
                   </div>
-                  <h1 className="nike-display text-2xl md:text-8xl italic uppercase leading-none">{team.name}</h1>
+                   <h1 className="nike-display text-white text-2xl md:text-8xl italic uppercase leading-none">{team.name}</h1>
                 </div>
              </div>
              
@@ -59,86 +60,82 @@ export default function TeamDetail() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 -mt-12 relative z-20">
+       <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 -mt-12 relative z-20">
+        {/* Tab System */}
+        <div className="flex bg-white shadow-2xl mb-12">
+          {['squad', 'matches'].map(tab => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`flex-1 py-6 text-[10px] font-black uppercase tracking-[0.3em] transition-all border-b-4 ${
+                activeTab === tab ? 'border-nike-black text-nike-black' : 'border-transparent text-nike-secondary hover:text-nike-black bg-snow'
+              }`}
+            >
+              {tab === 'squad' ? 'The Squad' : 'The Matches'}
+            </button>
+          ))}
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
           
           {/* Main Content: Squad */}
           <div className="lg:col-span-3 space-y-16">
-            <section>
-              <div className="flex items-end justify-between mb-8 border-b-2 border-nike-black pb-4">
-                <h2 className="nike-display text-4xl italic uppercase">The Squad</h2>
-                <span className="text-[10px] font-black uppercase tracking-[0.2em]">{players.length} Registered</span>
-              </div>
-              
-              {players.length === 0 ? (
-                <div className="p-20 text-center border-2 border-dashed border-light-gray">
-                   <p className="nike-headline text-nike-secondary italic uppercase">No players registered yet</p>
+             {activeTab === 'squad' ? (
+              <section>
+                <div className="flex items-end justify-between mb-8 pb-4">
+                  <h2 className="nike-display text-4xl italic uppercase">Athletes</h2>
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em]">{players.length} Registered</span>
                 </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
-                  {players.map((player) => (
-                    <PlayerCard key={player.id} player={player} />
-                  ))}
-                </div>
-              )}
-            </section>
+                
+                {players.length === 0 ? (
+                  <div className="p-20 text-center border-2 border-dashed border-light-gray">
+                     <p className="nike-headline text-nike-secondary italic uppercase">No players registered yet</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
+                    {players.map((player) => (
+                      <PlayerCard key={player.id} player={player} />
+                    ))}
+                  </div>
+                )}
+              </section>
+            ) : (
+              <section className="space-y-12">
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12">
+                    <section>
+                      <h3 className="nike-display text-2xl uppercase italic mb-6 flex items-center gap-3">
+                         <Calendar size={20} className="text-nike-red" /> Upcoming 
+                      </h3>
+                      <div className="space-y-4">
+                        {upcomingMatches.length === 0 ? (
+                          <div className="bg-snow p-8 text-center">
+                            <p className="text-[10px] font-black text-nike-secondary uppercase opacity-50 tracking-widest">No upcoming fixtures</p>
+                          </div>
+                        ) : (
+                          upcomingMatches.map(m => <MatchCard key={m.id} match={m} />)
+                        )}
+                      </div>
+                    </section>
 
-            {/* Matches Section for Desktop (Bottom of main) */}
-            <div className="hidden lg:block space-y-12 pt-8">
-               <div className="grid grid-cols-2 gap-12">
-                  <section>
-                    <h3 className="nike-display text-2xl uppercase italic mb-6 flex items-center gap-3">
-                       <Calendar size={20} className="text-nike-red" /> Upcoming 
-                    </h3>
-                    <div className="space-y-4">
-                      {upcomingMatches.length === 0 ? (
-                        <p className="text-[10px] font-black text-nike-secondary uppercase opacity-50">No upcoming fixtures</p>
-                      ) : (
-                        upcomingMatches.map(m => <MatchCard key={m.id} match={m} />)
-                      )}
-                    </div>
-                  </section>
+                    <section>
+                      <h3 className="nike-display text-2xl uppercase italic mb-6 flex items-center gap-3">
+                         <Trophy size={20} className="text-nike-blue" /> Results 
+                      </h3>
+                      <div className="space-y-4">
+                        {completedMatches.length === 0 ? (
+                           <div className="bg-snow p-8 text-center">
+                            <p className="text-[10px] font-black text-nike-secondary uppercase opacity-50 tracking-widest">No recent results</p>
+                          </div>
+                        ) : (
+                          completedMatches.map(m => <MatchCard key={m.id} match={m} />)
+                        )}
+                      </div>
+                    </section>
+                 </div>
+              </section>
+            )}
 
-                  <section>
-                    <h3 className="nike-display text-2xl uppercase italic mb-6 flex items-center gap-3">
-                       <Trophy size={20} className="text-nike-blue" /> Results 
-                    </h3>
-                    <div className="space-y-4">
-                      {completedMatches.length === 0 ? (
-                        <p className="text-[10px] font-black text-nike-secondary uppercase opacity-50">No recent results</p>
-                      ) : (
-                        completedMatches.map(m => <MatchCard key={m.id} match={m} />)
-                      )}
-                    </div>
-                  </section>
-               </div>
-            </div>
-          </div>
-
-          {/* Sidebar / Mobile Matches */}
-          <aside className="lg:col-span-1 space-y-10 block lg:hidden">
-             <section className="bg-snow p-8">
-                <h3 className="text-[10px] font-black uppercase tracking-[0.4em] mb-6 text-nike-secondary border-b border-light-gray pb-2">Matches</h3>
-                <div className="space-y-6">
-                   {matches.slice(0, 5).map(m => (
-                      <Link key={m.id} to={`/match/${m.id}`} className="flex items-center justify-between group">
-                         <div>
-                            <p className="text-[8px] font-black text-nike-secondary uppercase tracking-widest">{new Date(m.match_date).toLocaleDateString()}</p>
-                            <p className="font-nike font-black uppercase text-sm group-hover:underline">VS {m.team_a_id === id ? m.team_b?.name : m.team_a?.name}</p>
-                         </div>
-                         <div className="text-right">
-                            {m.status === 'completed' ? (
-                               <span className="font-nike font-black text-nike-red">{m.score_a} - {m.score_b}</span>
-                            ) : (
-                               <ChevronRight size={14} className="text-light-gray" />
-                            )}
-                         </div>
-                      </Link>
-                   ))}
-                </div>
-             </section>
-          </aside>
-        </div>
+         </div>
       </div>
     </div>
   )
