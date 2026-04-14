@@ -143,7 +143,7 @@ export default function ManagePlayers() {
       {/* Header */}
       <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 py-16 border-b border-light-gray flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <p className="section-subtitle mb-3">Roster Management</p>
+          <p className="section-subtitle mb-3">Team Management</p>
           <h1 className="nike-display text-6xl md:text-8xl uppercase">Athletes</h1>
         </div>
         <button 

@@ -16,7 +16,7 @@ export default function Teams() {
       {/* Page Header */}
       <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 py-16 border-b border-light-gray">
         <p className="section-subtitle mb-3">Season 2026</p>
-        <h1 className="nike-display text-7xl md:text-9xl">THE ROSTERS</h1>
+        <h1 className="nike-display text-7xl md:text-9xl">THE TEAMS</h1>
         <p className="text-nike-secondary text-sm font-medium mt-4">{teams.length} teams competing across 2 pools</p>
       </div>
 

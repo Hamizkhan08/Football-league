@@ -116,7 +116,7 @@ export default function Home() {
           <p className="section-subtitle mb-6 text-center">EXPLORE THE LEAGUE</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {[
-              { to: '/teams',        label: 'THE ROSTERS', img: 'file:///C:/Users/Admin.DESKTOP-HOGQNHQ/.gemini/antigravity/brain/a6d11d5b-5cd3-481b-a9d9-b2019bc9738b/home_categories_set_1776189569000_1776190501850.png', pos: 'top left', scale: 'scale-[2.2]' },
+              { to: '/teams',        label: 'THE TEAMS', img: 'file:///C:/Users/Admin.DESKTOP-HOGQNHQ/.gemini/antigravity/brain/a6d11d5b-5cd3-481b-a9d9-b2019bc9738b/home_categories_set_1776189569000_1776190501850.png', pos: 'top left', scale: 'scale-[2.2]' },
               { to: '/points-table', label: 'THE STANDINGS', img: 'file:///C:/Users/Admin.DESKTOP-HOGQNHQ/.gemini/antigravity/brain/a6d11d5b-5cd3-481b-a9d9-b2019bc9738b/home_categories_set_1776189569000_1776190501850.png', pos: 'right', scale: 'scale-[1.8]' },
               { to: '/top-scorers',  label: 'THE GOALS', img: 'file:///C:/Users/Admin.DESKTOP-HOGQNHQ/.gemini/antigravity/brain/a6d11d5b-5cd3-481b-a9d9-b2019bc9738b/home_categories_set_1776189569000_1776190501850.png', pos: 'bottom left', scale: 'scale-[2.2]' },
             ].map(l => (
@@ -129,9 +129,6 @@ export default function Home() {
                 <div className="absolute inset-0 bg-black/20 md:bg-black/30 group-hover:bg-black/10 transition-colors" />
                 <div className="absolute bottom-10 left-10">
                   <span className="text-white text-5xl font-nike font-black uppercase leading-none drop-shadow-lg">{l.label}</span>
-                  <div className="mt-4 opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">
-                    <span className="bg-white text-nike-black px-6 py-2 rounded-nike text-xs font-black uppercase tracking-widest">Shop All</span>
-                  </div>
                 </div>
               </Link>
             ))}
