@@ -1,0 +1,123 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Barlow+Condensed:wght@700;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-white text-nike-black font-sans antialiased;
+    min-height: 100vh;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-light-gray;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border-primary rounded-full;
+  }
+}
+
+@layer components {
+  /* Nike Massive Typography */
+  .nike-display {
+    @apply font-nike font-black uppercase tracking-tighter leading-[0.9] text-nike-black;
+  }
+
+  .nike-headline {
+    @apply font-nike font-bold uppercase tracking-tight leading-tight text-nike-black;
+  }
+
+  /* Pill Buttons */
+  .btn-primary {
+    @apply bg-nike-black hover:bg-border-primary text-white font-medium px-6 py-3 rounded-nike transition-all duration-200 active:scale-95 disabled:bg-hover-gray disabled:text-border-secondary;
+  }
+
+  .btn-secondary {
+    @apply bg-white hover:bg-hover-gray text-nike-black border border-border-secondary font-medium px-6 py-3 rounded-nike transition-all duration-200 active:scale-95;
+  }
+
+  .btn-outline {
+    @apply bg-transparent border-2 border-nike-black text-nike-black hover:bg-nike-black hover:text-white font-bold px-6 py-3 rounded-nike transition-all duration-200;
+  }
+
+  /* Nike Cards */
+  .nike-card {
+    @apply bg-white border-0 rounded-none overflow-hidden;
+  }
+
+  .nike-surface {
+    @apply bg-light-gray rounded-2xl p-6;
+  }
+
+  .section-title {
+    @apply text-3xl md:text-4xl font-black uppercase text-nike-black tracking-tight;
+  }
+
+  .section-subtitle {
+    @apply text-nike-secondary text-xs font-bold uppercase tracking-widest;
+  }
+
+  /* Semantic Badges */
+  .badge-nike {
+    @apply px-3 py-1 rounded-nike text-[10px] font-black uppercase tracking-widest;
+  }
+
+  .pool-badge-a {
+    @apply badge-nike bg-snow text-nike-black border border-border-secondary;
+  }
+
+  .pool-badge-b {
+    @apply badge-nike bg-nike-black text-white;
+  }
+
+  .status-upcoming {
+    @apply badge-nike bg-snow text-nike-secondary border border-border-secondary;
+  }
+
+  .status-live {
+    @apply badge-nike bg-nike-red text-white animate-pulse;
+  }
+
+  .status-completed {
+    @apply badge-nike bg-nike-black text-white;
+  }
+
+  .nav-link {
+    @apply text-nike-black hover:text-nike-secondary transition-colors duration-200 font-medium text-base;
+  }
+
+  .nav-link-active {
+    @apply text-nike-black font-bold relative after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-[2px] after:bg-nike-black;
+  }
+}
+
+@layer utilities {
+  .text-nike-blue { color: #1151FF; }
+  .text-nike-red { color: #D30005; }
+  
+  .inset-divider {
+    box-shadow: 0px -1px 0px 0px #E5E5E5 inset;
+  }
+
+  .animate-in {
+    @apply animate-fade-in;
+  }
+}
+
+/* Image Full-Bleed Helper */
+.img-bleed {
+  @apply rounded-none object-cover w-full h-full;
+}
+
