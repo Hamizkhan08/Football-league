@@ -12,7 +12,7 @@ function TeamScore({ team, score, side }) {
         {team?.logo_url ? <img src={team.logo_url} alt={team.name} className="w-full h-full object-cover" /> : initials}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-nike-black font-black text-[10px] sm:text-sm uppercase leading-tight truncate">{team?.name || 'TBD'}</p>
+        <p className="text-nike-black font-black text-[10px] sm:text-sm uppercase leading-tight line-clamp-2">{team?.name || 'TBD'}</p>
         <p className="text-nike-secondary text-[7px] sm:text-[10px] font-bold uppercase tracking-widest hidden sm:block">Team</p>
       </div>
     </div>
@@ -25,7 +25,7 @@ export default function MatchCard({ match }) {
 
   return (
     <Link to={`/match/${match.id}`} className="block group">
-      <div className={`bg-white hover:bg-snow transition-colors duration-200 border-l-4 ${match.status === 'live' ? 'border-l-nike-red' : 'border-l-nike-black'} p-5`}>
+      <div className={`bg-white hover:bg-snow transition-colors duration-200 border-l-4 ${match.status === 'live' ? 'border-l-nike-red' : 'border-l-nike-black'} p-4 sm:p-5`}>
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
