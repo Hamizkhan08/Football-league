@@ -18,12 +18,12 @@ export default function SponsorTicker() {
   const tickerItems = [...sponsors, ...sponsors, ...sponsors, ...sponsors]
 
   return (
-    <div className="w-full bg-snow border-y border-light-gray py-8 overflow-hidden group">
+    <div className="w-full bg-nike-black border-y border-white/5 py-10 overflow-hidden group">
       <div className="flex items-center gap-12 whitespace-nowrap animate-ticker group-hover:[animation-play-state:paused]">
         {tickerItems.map((sponsor, idx) => (
           <div 
             key={`${sponsor.id}-${idx}`}
-            className="flex items-center gap-4 transition-all duration-300 px-8 grayscale opacity-50 hover:grayscale-0 hover:opacity-100"
+            className="flex items-center gap-4 transition-all duration-500 px-8 grayscale invert brightness-200 opacity-40 hover:grayscale-0 hover:invert-0 hover:brightness-100 hover:opacity-100"
           >
             <div className="h-10 md:h-12 w-auto">
               <img 
@@ -32,7 +32,7 @@ export default function SponsorTicker() {
                 className="h-full w-auto object-contain"
               />
             </div>
-            <span className="nike-display text-xl md:text-2xl italic uppercase text-nike-black/20">
+            <span className="nike-display text-xl md:text-2xl italic uppercase text-white/10">
               {sponsor.name}
             </span>
           </div>
