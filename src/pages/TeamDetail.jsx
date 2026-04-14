@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, Shield, Calendar, Trophy, ChevronRight } from 'lucide-react'
 import { useTeam } from '../hooks/useTeams'
@@ -92,7 +93,7 @@ export default function TeamDetail() {
                      <p className="nike-headline text-nike-secondary italic uppercase">No players registered yet</p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
                     {players.map((player) => (
                       <PlayerCard key={player.id} player={player} />
                     ))}
@@ -135,8 +136,9 @@ export default function TeamDetail() {
               </section>
             )}
 
-         </div>
+        </div>
       </div>
     </div>
-  )
+  </div>
+)
 }

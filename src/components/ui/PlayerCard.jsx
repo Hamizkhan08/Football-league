@@ -4,6 +4,16 @@ import { Target, Activity, Users, Camera, Upload, Check, Loader2 } from 'lucide-
 import { supabase } from '../../lib/supabase'
 import toast from 'react-hot-toast'
 
+const getInitials = (name) => {
+  if (!name) return '?'
+  return name
+    .split(' ')
+    .map(word => word[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2)
+}
+
 export default function PlayerCard({ player }) {
   const [isUploading, setIsUploading] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
@@ -58,12 +68,13 @@ export default function PlayerCard({ player }) {
       <Link to={`/players/${player.id}`} className="block">
         <div className="bg-white border border-light-gray group-hover:border-nike-black transition-all overflow-hidden flex flex-col h-full">
           <div className="p-4 sm:p-6 flex items-start gap-4 sm:gap-6">
-            <div className="w-16 h-20 sm:w-20 sm:h-24 bg-light-gray shrink-0 border border-light-gray overflow-hidden relative group/img">
+            <div className="w-16 h-20 sm:w-20 sm:h-24 bg-nike-black shrink-0 border border-nike-black overflow-hidden relative group/img shadow-lg">
               {player.image_url ? (
                 <img src={player.image_url} className="w-full h-full object-cover" alt={player.name} />
               ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <Users size={32} className="text-nike-secondary/30" />
+                <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-nike-black to-nike-secondary text-white">
+                  <span className="nike-display text-2xl sm:text-3xl tracking-tighter leading-none">{getInitials(player.name)}</span>
+                  <div className="w-4 h-0.5 bg-nike-red mt-1 opacity-50"></div>
                 </div>
               )}
               
@@ -82,25 +93,25 @@ export default function PlayerCard({ player }) {
               )}
             </div>
 
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 flex flex-col justify-center h-full">
               <div className="flex items-start justify-between mb-1">
-                <span className="nike-display text-2xl sm:text-4xl text-nike-black leading-none">{player.jersey_no || '00'}</span>
+                <span className="nike-display text-4xl sm:text-5xl text-nike-black leading-none">{player.jersey_no || '00'}</span>
                 {player.is_captain && (
-                  <span className="text-[7px] sm:text-[8px] bg-nike-black text-white px-2 py-0.5 font-black uppercase tracking-widest">Captain</span>
+                  <span className="text-[7px] sm:text-[8px] bg-nike-red text-white px-2 py-0.5 font-black uppercase tracking-widest italic shadow-sm">Captain</span>
                 )}
               </div>
-              <h3 className="nike-headline text-lg sm:text-2xl mb-1 truncate uppercase">{player.name}</h3>
-              <p className="text-[8px] sm:text-[10px] font-black uppercase tracking-widest text-nike-secondary truncate mb-2">{player.team?.name}</p>
+              <h3 className="nike-headline text-lg sm:text-2xl mb-1 truncate uppercase italic leading-none">{player.name}</h3>
+              <p className="text-[9px] sm:text-[11px] font-black uppercase tracking-[0.2em] text-nike-secondary truncate mb-3">{player.team?.name}</p>
               
               {/* Mini Stats Grid */}
-              <div className="flex items-center gap-4 mt-2 border-t border-light-gray pt-2">
+              <div className="flex items-center gap-6 mt-1 pt-3 border-t border-light-gray">
                 <div className="flex flex-col">
-                  <span className="text-[10px] font-black leading-none">{player.matches_played || 0}</span>
-                  <span className="text-[7px] font-bold text-nike-secondary uppercase tracking-widest">MP</span>
+                  <span className="text-sm font-black leading-none text-nike-black">{player.matches_played || 0}</span>
+                  <span className="text-[8px] font-black text-nike-secondary uppercase tracking-[0.1em] mt-1">Appearance</span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[10px] font-black text-nike-red leading-none">{player.goals || 0}</span>
-                  <span className="text-[7px] font-bold text-nike-secondary uppercase tracking-widest">Goals</span>
+                  <span className="text-sm font-black text-nike-red leading-none">{player.goals || 0}</span>
+                  <span className="text-[8px] font-black text-nike-secondary uppercase tracking-[0.1em] mt-1">Goals</span>
                 </div>
               </div>
             </div>
