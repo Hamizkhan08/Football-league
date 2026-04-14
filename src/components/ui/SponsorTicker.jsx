@@ -32,7 +32,7 @@ export default function SponsorTicker() {
                 className="h-full w-auto object-contain"
               />
             </div>
-            <span className="nike-display text-xl md:text-2xl italic uppercase text-white/10">
+            <span className="nike-display text-xl md:text-2xl italic uppercase text-white/60 group-hover:text-white transition-colors">
               {sponsor.name}
             </span>
           </div>

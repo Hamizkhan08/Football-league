@@ -17,7 +17,7 @@ export default function Home() {
       const [teamsRes, matchesRes, goalsRes, playersRes, upcomingRes] = await Promise.all([
         supabase.from('teams').select('id', { count: 'exact', head: true }),
         supabase.from('matches').select('id', { count: 'exact', head: true }).eq('status', 'completed'),
-        supabase.from('goals').select('id', { count: 'exact', head: true }),
+        supabase.from('match_goals').select('id', { count: 'exact', head: true }),
         supabase.from('players').select('id', { count: 'exact', head: true }),
         supabase.from('matches').select('*, team_a:team_a_id(id,name,logo_url), team_b:team_b_id(id,name,logo_url)').neq('status', 'completed').order('match_date').limit(4),
       ])
