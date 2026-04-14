@@ -80,7 +80,14 @@ export default function Bracket() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-0 items-center">
+        {/* Mobile Swipe Indicator */}
+        <div className="lg:hidden flex items-center gap-2 text-nike-secondary text-[9px] font-black uppercase tracking-widest mb-6 opacity-60 animate-pulse">
+           <ChevronRight size={12} /> Swipe for Bracket
+        </div>
+
+        <div className="overflow-x-auto pb-8 scrollbar-hide">
+          <div className="min-w-[800px] lg:min-w-0">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-0 items-center">
           
           <div className="space-y-12">
             <h2 className="text-xl font-nike font-black text-nike-secondary mb-8 border-b border-light-gray pb-2 uppercase tracking-tight">Semi-Finals</h2>
@@ -106,6 +113,8 @@ export default function Bracket() {
                <div className="max-w-xs mx-auto text-center">
                 <Card match={thirdPlaceMatch} label="Bronze Medal Match" tbdA="SF1 Loser" tbdB="SF2 Loser" />
                </div>
+            </div>
+          </div>
             </div>
           </div>
         </div>

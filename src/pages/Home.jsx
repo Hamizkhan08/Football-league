@@ -66,11 +66,11 @@ export default function Home() {
             The premier college football championship. CPL 2026 brings together the elite squads for a fight that will define history.
           </p>
           
-          <div className="flex flex-wrap gap-4 animate-slide-in" style={{ animationDelay: '300ms' }}>
-            <Link to="/schedule" className="bg-white text-nike-black hover:bg-hover-gray px-10 py-5 rounded-nike text-sm font-black uppercase tracking-widest transition-all">
+          <div className="flex flex-col sm:flex-row gap-4 animate-slide-in" style={{ animationDelay: '300ms' }}>
+            <Link to="/schedule" className="bg-white text-nike-black hover:bg-hover-gray px-10 py-5 rounded-nike text-sm font-black uppercase tracking-widest transition-all text-center sm:text-left">
               Join the Fight
             </Link>
-            <Link to="/points-table" className="border-2 border-white text-white hover:bg-white hover:text-nike-black px-10 py-5 rounded-nike text-sm font-black uppercase tracking-widest transition-all">
+            <Link to="/points-table" className="border-2 border-white text-white hover:bg-white hover:text-nike-black px-10 py-5 rounded-nike text-sm font-black uppercase tracking-widest transition-all text-center sm:text-left">
               Live Standings
             </Link>
           </div>
@@ -120,13 +120,13 @@ export default function Home() {
               { to: '/points-table', label: 'THE STANDINGS', img: 'file:///C:/Users/Admin.DESKTOP-HOGQNHQ/.gemini/antigravity/brain/a6d11d5b-5cd3-481b-a9d9-b2019bc9738b/home_categories_set_1776189569000_1776190501850.png', pos: 'right', scale: 'scale-[1.8]' },
               { to: '/top-scorers',  label: 'THE GOALS', img: 'file:///C:/Users/Admin.DESKTOP-HOGQNHQ/.gemini/antigravity/brain/a6d11d5b-5cd3-481b-a9d9-b2019bc9738b/home_categories_set_1776189569000_1776190501850.png', pos: 'bottom left', scale: 'scale-[2.2]' },
             ].map(l => (
-              <Link key={l.to} to={l.to} className="relative group overflow-hidden h-[400px] bg-nike-black">
+              <Link key={l.to} to={l.to} className="relative group overflow-hidden h-[250px] md:h-[400px] bg-nike-black">
                 <img 
                   src={l.img} 
                   alt={l.label} 
                   className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 ${l.scale} origin-${l.pos}`}
                 />
-                <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors" />
+                <div className="absolute inset-0 bg-black/20 md:bg-black/30 group-hover:bg-black/10 transition-colors" />
                 <div className="absolute bottom-10 left-10">
                   <span className="text-white text-5xl font-nike font-black uppercase leading-none drop-shadow-lg">{l.label}</span>
                   <div className="mt-4 opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">

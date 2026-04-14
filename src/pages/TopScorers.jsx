@@ -36,7 +36,7 @@ export default function TopScorers() {
       <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 py-16 border-b border-light-gray flex flex-col md:flex-row md:items-end justify-between gap-8">
         <div>
           <p className="section-subtitle mb-3">Player Rankings</p>
-          <h1 className="nike-display text-7xl md:text-9xl italic leading-none uppercase">Golden Boot</h1>
+          <h1 className="nike-display text-5xl md:text-9xl italic leading-none uppercase">Golden Boot</h1>
         </div>
         <div className="max-w-xs">
           <p className="text-[10px] font-black text-nike-secondary uppercase tracking-widest leading-relaxed">
@@ -51,7 +51,7 @@ export default function TopScorers() {
         {displayed.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-2">
             {displayed.slice(0, 3).map((player, idx) => (
-              <div key={player.id} className={`p-5 text-center border ${idx === 0 ? 'bg-nike-black text-white border-nike-black shadow-2xl scale-105 z-10' : 'bg-light-gray border-light-gray'}`}>
+              <div key={player.id} className={`p-8 md:p-5 text-center border ${idx === 0 ? 'bg-nike-black text-white border-nike-black shadow-2xl md:scale-105 z-10' : 'bg-light-gray border-light-gray'}`}>
                 <div className="text-3xl mb-3">{MEDAL[idx]}</div>
                 <div className={`w-14 h-14 mx-auto mb-3 overflow-hidden flex items-center justify-center ${idx === 0 ? 'bg-white/10' : 'bg-white'}`}>
                   {player.image_url ? (

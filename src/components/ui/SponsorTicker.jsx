@@ -23,7 +23,7 @@ export default function SponsorTicker() {
         {tickerItems.map((sponsor, idx) => (
           <div 
             key={`${sponsor.id}-${idx}`}
-            className="flex items-center gap-4 transition-all duration-500 px-8 grayscale invert brightness-200 opacity-40 hover:grayscale-0 hover:invert-0 hover:brightness-100 hover:opacity-100"
+            className="flex items-center gap-4 transition-all duration-500 px-8 grayscale invert brightness-[2.5] md:brightness-200 opacity-60 md:opacity-40 hover:grayscale-0 hover:invert-0 hover:brightness-100 hover:opacity-100"
           >
             <div className="h-10 md:h-12 w-auto">
               <img 

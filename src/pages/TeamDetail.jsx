@@ -26,9 +26,9 @@ export default function TeamDetail() {
   return (
     <div className="animate-in bg-white min-h-screen pb-24">
       {/* Super Header */}
-      <div className="bg-nike-black text-white pt-12 pb-24 px-6 md:px-12 lg:px-20 relative overflow-hidden">
+      <div className="bg-nike-black text-white pt-8 pb-16 md:pt-12 md:pb-24 px-6 md:px-12 lg:px-20 relative overflow-hidden">
         <div className="max-w-7xl mx-auto relative z-10">
-          <Link to="/teams" className="inline-flex items-center gap-2 text-white/50 hover:text-white transition-colors text-[10px] font-black uppercase tracking-widest mb-10">
+          <Link to="/teams" className="inline-flex items-center gap-2 text-white/50 hover:text-white transition-colors text-[10px] font-black uppercase tracking-widest mb-6 md:mb-10">
             <ArrowLeft size={14} /> Back to League Teams
           </Link>
           
@@ -75,7 +75,7 @@ export default function TeamDetail() {
                    <p className="nike-headline text-nike-secondary italic uppercase">No players registered yet</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                   {players.map((player) => (
                     <PlayerCard key={player.id} player={player} />
                   ))}
