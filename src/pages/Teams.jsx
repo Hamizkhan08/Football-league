@@ -30,7 +30,7 @@ export default function Teams() {
             </div>
             <span className="text-nike-secondary text-xs font-black uppercase tracking-widest">{poolA.length} Teams</span>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
             {poolA.map(team => <TeamCard key={team.id} team={team} />)}
           </div>
         </section>
@@ -46,7 +46,7 @@ export default function Teams() {
             </div>
             <span className="text-nike-secondary text-xs font-black uppercase tracking-widest">{poolB.length} Teams</span>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
             {poolB.map(team => <TeamCard key={team.id} team={team} />)}
           </div>
         </section>

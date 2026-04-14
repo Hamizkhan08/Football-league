@@ -32,23 +32,23 @@ export default function TeamDetail() {
             <ArrowLeft size={14} /> Back to League Teams
           </Link>
           
-          <div className="flex flex-col md:flex-row items-center md:items-end justify-between gap-10">
-             <div className="flex flex-col md:flex-row items-center gap-8">
-                <div className="w-24 h-24 md:w-32 md:h-32 bg-white flex items-center justify-center text-nike-black font-black text-4xl overflow-hidden border-4 border-white/10 shadow-2xl">
+          <div className="flex flex-row md:flex-row items-center md:items-end justify-between gap-6 md:gap-10">
+             <div className="flex flex-row items-center gap-4 md:gap-8">
+                <div className="w-16 h-16 md:w-32 md:h-32 bg-white flex items-center justify-center text-nike-black font-black text-2xl md:text-4xl overflow-hidden border-2 md:border-4 border-white/10 shadow-2xl shrink-0">
                   {team.logo_url ? <img src={team.logo_url} alt="" className="w-full h-full object-cover" /> : initials}
                 </div>
-                <div className="text-center md:text-left">
-                  <div className="flex items-center justify-center md:justify-start gap-4 mb-2">
-                    <span className="text-white/40 text-[10px] font-black uppercase tracking-[0.3em]">Pool {team.pool || 'A'}</span>
-                    <Badge variant="gold">{team.is_qualified ? 'Qualifier' : 'League'}</Badge>
+                <div className="text-left">
+                  <div className="flex items-center justify-start gap-4 mb-1 md:mb-2">
+                    <span className="text-white/40 text-[8px] md:text-[10px] font-black uppercase tracking-[0.3em]">Pool {team.pool || 'A'}</span>
+                    <Badge variant="gold" className="text-[8px] md:text-[10px]">{team.is_qualified ? 'Qualifier' : 'League'}</Badge>
                   </div>
-                  <h1 className="nike-display text-5xl md:text-8xl italic uppercase leading-none">{team.name}</h1>
+                  <h1 className="nike-display text-2xl md:text-8xl italic uppercase leading-none">{team.name}</h1>
                 </div>
              </div>
              
-             <div className="bg-white/5 border border-white/10 p-6 flex flex-col items-center md:items-end">
-                <span className="text-white/40 text-[10px] font-black uppercase tracking-widest mb-1">Elite Captain</span>
-                <span className="nike-headline text-xl text-white uppercase italic leading-none">{team.captain_name || 'TBD'}</span>
+             <div className="bg-white/5 border border-white/10 p-3 md:p-6 flex flex-col items-end hidden sm:flex">
+                <span className="text-white/40 text-[8px] md:text-[10px] font-black uppercase tracking-widest mb-1">Elite Captain</span>
+                <span className="nike-headline text-lg md:text-xl text-white uppercase italic leading-none">{team.captain_name || 'TBD'}</span>
              </div>
           </div>
         </div>
@@ -75,7 +75,7 @@ export default function TeamDetail() {
                    <p className="nike-headline text-nike-secondary italic uppercase">No players registered yet</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
                   {players.map((player) => (
                     <PlayerCard key={player.id} player={player} />
                   ))}
