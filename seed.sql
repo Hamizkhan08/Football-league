@@ -53,12 +53,12 @@ TRUNCATE TABLE match_goals, players, matches, teams, sponsors CASCADE;
 
 -- 3. INSERT SPONSORS
 INSERT INTO sponsors (name, logo_url) VALUES 
-('Nike', 'https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo_NIKE.svg'),
-('Adidas', 'https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg'),
-('Red Bull', 'https://upload.wikimedia.org/wikipedia/en/f/f5/Red_Bull_Racing_logo.svg'),
-('EA Sports', 'https://upload.wikimedia.org/wikipedia/commons/0/0d/EA_Sports_logo.svg'),
-('Pepsi', 'https://upload.wikimedia.org/wikipedia/commons/0/0f/Pepsi_logo_2014.svg'),
-('Emirates', 'https://upload.wikimedia.org/wikipedia/commons/d/d0/Emirates_logo.svg');
+('Nike', 'https://logo.clearbit.com/nike.com'),
+('Adidas', 'https://logo.clearbit.com/adidas.com'),
+('Red Bull', 'https://logo.clearbit.com/redbull.com'),
+('EA Sports', 'https://logo.clearbit.com/ea.com'),
+('Pepsi', 'https://logo.clearbit.com/pepsi.com'),
+('Emirates', 'https://logo.clearbit.com/emirates.com');
 
 -- 3. INSERT TEAMS (CPL 2026)
 INSERT INTO teams (name, captain_name, pool, logo_url) VALUES 

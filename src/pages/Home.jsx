@@ -116,12 +116,16 @@ export default function Home() {
           <p className="section-subtitle mb-6 text-center">EXPLORE THE LEAGUE</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {[
-              { to: '/teams',        label: 'THE ROSTERS', img: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=800' },
-              { to: '/points-table', label: 'THE STANDINGS', img: 'https://images.unsplash.com/photo-1518091043644-c1d445eb042c?q=80&w=800' },
-              { to: '/top-scorers',  label: 'THE GOALS', img: 'https://images.unsplash.com/photo-1434648957308-5e6a859697e8?q=80&w=800' },
+              { to: '/teams',        label: 'THE ROSTERS', img: 'file:///C:/Users/Admin.DESKTOP-HOGQNHQ/.gemini/antigravity/brain/a6d11d5b-5cd3-481b-a9d9-b2019bc9738b/home_categories_set_1776189569000_1776190501850.png', pos: 'top left', scale: 'scale-[2.2]' },
+              { to: '/points-table', label: 'THE STANDINGS', img: 'file:///C:/Users/Admin.DESKTOP-HOGQNHQ/.gemini/antigravity/brain/a6d11d5b-5cd3-481b-a9d9-b2019bc9738b/home_categories_set_1776189569000_1776190501850.png', pos: 'right', scale: 'scale-[1.8]' },
+              { to: '/top-scorers',  label: 'THE GOALS', img: 'file:///C:/Users/Admin.DESKTOP-HOGQNHQ/.gemini/antigravity/brain/a6d11d5b-5cd3-481b-a9d9-b2019bc9738b/home_categories_set_1776189569000_1776190501850.png', pos: 'bottom left', scale: 'scale-[2.2]' },
             ].map(l => (
-              <Link key={l.to} to={l.to} className="relative group overflow-hidden h-[400px]">
-                <img src={l.img} alt={l.label} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+              <Link key={l.to} to={l.to} className="relative group overflow-hidden h-[400px] bg-nike-black">
+                <img 
+                  src={l.img} 
+                  alt={l.label} 
+                  className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 ${l.scale} origin-${l.pos}`}
+                />
                 <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors" />
                 <div className="absolute bottom-10 left-10">
                   <span className="text-white text-5xl font-nike font-black uppercase leading-none drop-shadow-lg">{l.label}</span>
