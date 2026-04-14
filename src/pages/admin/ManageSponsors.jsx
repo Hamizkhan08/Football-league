@@ -17,9 +17,12 @@ export default function ManageSponsors() {
   async function fetchSponsors() {
     setLoading(true)
     const { data, error } = await supabase.from('sponsors').select('*').order('created_at', { ascending: true })
-    if (error) toast.error('Error fetching sponsors')
-    else setScorer(data || [])
-    setSponsors(data || [])
+    if (error) {
+      console.error('Error fetching sponsors:', error)
+      toast.error('Error fetching sponsors')
+    } else {
+      setSponsors(data || [])
+    }
     setLoading(false)
   }
 

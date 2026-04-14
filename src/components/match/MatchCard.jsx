@@ -7,13 +7,13 @@ const STATUS_VARIANT = { upcoming: 'upcoming', live: 'live', completed: 'complet
 function TeamScore({ team, score, side }) {
   const initials = team?.name?.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase() || '??'
   return (
-    <div className={`flex items-center gap-3 ${side === 'right' ? 'sm:flex-row-reverse text-right' : ''}`}>
-      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-light-gray flex items-center justify-center text-nike-black font-black text-xs sm:text-sm flex-shrink-0 overflow-hidden shadow-sm">
+    <div className={`flex items-center gap-2 sm:gap-3 ${side === 'right' ? 'flex-row-reverse text-right' : ''}`}>
+      <div className="w-6 h-6 sm:w-10 sm:h-10 bg-light-gray flex items-center justify-center text-nike-black font-black text-[10px] sm:text-sm flex-shrink-0 overflow-hidden shadow-sm">
         {team?.logo_url ? <img src={team.logo_url} alt={team.name} className="w-full h-full object-cover" /> : initials}
       </div>
-      <div className={side === 'right' ? 'sm:text-right flex-1 min-w-0' : 'flex-1 min-w-0'}>
-        <p className="text-nike-black font-black text-[11px] sm:text-sm uppercase leading-tight truncate">{team?.name || 'TBD'}</p>
-        <p className="text-nike-secondary text-[8px] sm:text-[10px] font-bold uppercase tracking-widest">Team</p>
+      <div className="flex-1 min-w-0">
+        <p className="text-nike-black font-black text-[10px] sm:text-sm uppercase leading-tight truncate">{team?.name || 'TBD'}</p>
+        <p className="text-nike-secondary text-[7px] sm:text-[10px] font-bold uppercase tracking-widest hidden sm:block">Team</p>
       </div>
     </div>
   )
@@ -44,22 +44,21 @@ export default function MatchCard({ match }) {
         </div>
 
         {/* Teams & Score */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 sm:gap-4 lg:gap-8">
+        <div className="flex items-center justify-between gap-2 sm:gap-4 lg:gap-8">
           <div className="flex-1 min-w-0">
             <TeamScore team={match.team_a} score={isScored ? match.score_a : null} side="left" />
           </div>
 
-          <div className="flex flex-row sm:flex-col items-center justify-between sm:justify-center px-0 sm:px-2 flex-shrink-0 bg-snow sm:bg-transparent p-2 sm:p-0 border border-light-gray sm:border-none">
-            <span className="text-[8px] font-black uppercase tracking-widest text-nike-secondary sm:hidden">Scoreline</span>
+          <div className="flex-shrink-0 px-1">
             {isScored ? (
-              <div className="bg-nike-black text-white px-3 sm:px-4 py-1.5 sm:py-2 flex items-center gap-2 shadow-lg">
-                <span className="text-xl sm:text-2xl font-black tabular-nums leading-none">{match.score_a}</span>
-                <span className="text-nike-red font-black leading-none">—</span>
-                <span className="text-xl sm:text-2xl font-black tabular-nums leading-none">{match.score_b}</span>
+              <div className="bg-nike-black text-white px-2 sm:px-4 py-1.5 sm:py-2 flex items-center gap-1.5 sm:gap-2 shadow-lg">
+                <span className="text-sm sm:text-2xl font-black tabular-nums leading-none">{match.score_a}</span>
+                <span className="text-nike-red font-black leading-none text-xs sm:text-base">—</span>
+                <span className="text-sm sm:text-2xl font-black tabular-nums leading-none">{match.score_b}</span>
               </div>
             ) : (
-              <div className="bg-light-gray px-4 py-2">
-                <span className="text-nike-black text-xs sm:text-sm font-black uppercase tracking-widest">VS</span>
+              <div className="bg-light-gray px-3 sm:px-4 py-1.5 sm:py-2">
+                <span className="text-nike-black text-[10px] sm:text-sm font-black uppercase tracking-widest">VS</span>
               </div>
             )}
           </div>
